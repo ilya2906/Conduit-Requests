@@ -1,0 +1,1243 @@
+{
+	"info": {
+		"_postman_id": "8cfe2a90-2e55-4b48-a943-828fd2d6470d",
+		"name": "Conduit Practice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Registration",
+			"item": [
+				{
+					"name": "Sign up with valid data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();\r",
+									"pm.environment.set(\"token\", pm.response.json().user.token);\r",
+									"pm.environment.set(\"email\", pm.response.json().user.email);\r",
+									"pm.test(\"Test all responce keys\", function () {\r",
+									"    pm.response.to.have.jsonBody('user.username')\r",
+									"        .and.to.have.jsonBody('user.email')\r",
+									"        .and.to.have.jsonBody('user.bio')\r",
+									"        .and.to.have.jsonBody('user.image')\r",
+									"        .and.to.have.jsonBody('user.token')\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Test data type of the response\", () => {\r",
+									"  pm.expect(jsonData.user).to.be.an(\"object\");\r",
+									"  pm.expect(jsonData.user.username).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.user.email).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.user.bio).to.be.a('null');\r",
+									"  pm.expect(jsonData.user.image).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.user.token).to.be.a(\"string\");\r",
+									"});\r",
+									""
+								],
+								"id": "65516338-96e0-4b45-8987-b2b236932c3e"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const userName = pm.variables.replaceIn('{{$randomUserName}}') + Math.floor(Math.random(1000) * 1000);\r",
+									"pm.environment.set('username', userName.toLowerCase());\r",
+									"\r",
+									"const email = pm.variables.replaceIn('{{$randomEmail}}');\r",
+									"pm.environment.set('email', email);\r",
+									""
+								],
+								"id": "79c8d988-9097-4264-898f-f4c5e3ec3982"
+							}
+						}
+					],
+					"_postman_id": "12e2ef57-e1ae-42ef-91df-3c79e1f6cd34",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{username}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{passwordConduit}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users"
+					},
+					"response": []
+				},
+				{
+					"name": "Exist Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email has already been taken \", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(`\"email\":[\"has already been taken\"]`);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"id": "cb55a1a3-d009-4228-bd32-1a418aa40def"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"usernameConduit\", pm.variables.replaceIn('{{$randomUserName}}'));"
+								],
+								"id": "534be0f4-b462-4b18-930f-05cef767fbd9"
+							}
+						}
+					],
+					"_postman_id": "a3f1f5e8-58ca-4d48-9bdd-5e27472560c1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"{{$randomUserName}}\",\r\n    \"email\": \"WIELKAMOC15@qa.team\",\r\n    \"password\": \"{{passwordConduit}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users"
+					},
+					"response": []
+				},
+				{
+					"name": "Exist Username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email has already been taken \", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(`\"username\":[\"has already been taken\"]`);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"id": "dfa2b500-5e5b-4891-8957-f000b4a43c95"
+							}
+						}
+					],
+					"_postman_id": "1dd92325-884b-4160-836e-f406ac3fc748",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"username\": \"Ilya\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"{{passwordConduit}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "06210e04-95b1-4fe3-9593-941eae549def"
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login with valid data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();\r",
+									"\r",
+									"pm.test(\"Test all responce keys\", function () {\r",
+									"    pm.response.to.have.jsonBody('user.email')\r",
+									"        .and.to.have.jsonBody('user.username')\r",
+									"        .and.to.have.jsonBody('user.bio')\r",
+									"        .and.to.have.jsonBody('user.image')\r",
+									"        .and.to.have.jsonBody('user.token')\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Test data type of the response\", () => {\r",
+									"  pm.expect(jsonData.user).to.be.an(\"object\");\r",
+									"  pm.expect(jsonData.user.username).to.eql(pm.environment.get('username'));\r",
+									"  pm.expect(jsonData.user.email).to.eql(pm.environment.get('email'));\r",
+									"  pm.expect(jsonData.user.bio).to.be.a(\"null\");\r",
+									"  pm.expect(jsonData.user.image).to.eql(\"https://api.realworld.io/images/smiley-cyrus.jpeg\");\r",
+									"  pm.expect(jsonData.user.token).to.be.a(\"string\");\r",
+									"});"
+								],
+								"id": "85ad0cbd-fe49-4594-bd75-d3dbb2ced468"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "d5a15b9a-fce7-47da-b356-bea717e162f4"
+							}
+						}
+					],
+					"_postman_id": "6e30ac8e-7e5a-42a2-9861-a018102c8ec3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{passwordConduit}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login with empty fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {\r",
+									"    pm.response.to.have.status(422);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response contains error message about taken email\", function () {\r",
+									"  var jsonData = pm.response.json();\r",
+									"  pm.expect(jsonData.errors[\"email\"][0]).to.eql(\"can't be blank\");\r",
+									"});"
+								],
+								"id": "68fa72e3-bc8f-4e87-a4a5-8e3c2252d0b8"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "c6acc71c-e3eb-4e59-8503-a51f770073d4"
+							}
+						}
+					],
+					"_postman_id": "0fef15b8-31cd-4749-b27d-784db65fd14f",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"\",\r\n    \"password\": \"\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login with wrong email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email has already been taken \", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(`{\"errors\":{\"email or password\":[\"is invalid\"]}}`);\r",
+									"});"
+								],
+								"id": "02e29cf8-808a-4305-9d28-124adb2fb0ba"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "2e153a85-ef19-4a3b-b524-e0c948dc2a9f"
+							}
+						}
+					],
+					"_postman_id": "39af44fc-5f35-4aa5-9ad4-081eed0242ca",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{email}}1\",\r\n    \"password\": \"{{passwordConduit}}\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Login with wrong password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email has already been taken \", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(`{\"errors\":{\"email or password\":[\"is invalid\"]}}`);\r",
+									"});"
+								],
+								"id": "9d232723-d04f-4d49-be42-2ac5e8531ebd"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "053b214b-1cf1-422c-88c7-9517176c322b"
+							}
+						}
+					],
+					"_postman_id": "652f7b59-f950-4853-8930-fff6ce5090e6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{passwordConduit}}1\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}users/login"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "ab5c7201-d100-4db3-b568-aecef8364856"
+		},
+		{
+			"name": "Article",
+			"item": [
+				{
+					"name": "Create article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"slugConduit\", pm.response.json().article.slug);\r",
+									"eval(globals.basicTests)();\r",
+									"\r",
+									"pm.test(\"Test all responce keys\", function () {\r",
+									"    pm.response.to.have.jsonBody('article.author')\r",
+									"        .and.to.have.jsonBody('article.title')\r",
+									"        .and.to.have.jsonBody('article.description')\r",
+									"        .and.to.have.jsonBody('article.favorited')\r",
+									"        .and.to.have.jsonBody('article.favoritesCount')\r",
+									"        .and.to.have.jsonBody('article.body')\r",
+									"        .and.to.have.jsonBody('article.tagList')\r",
+									"        .and.to.have.jsonBody('article.slug')\r",
+									"        .and.to.have.jsonBody('article.createdAt')\r",
+									"        .and.to.have.jsonBody('article.updatedAt')\r",
+									"});\r",
+									"\r",
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Test data type of the response\", () => {\r",
+									"  pm.expect(jsonData.article).to.be.an(\"object\");\r",
+									"  pm.expect(jsonData.article.author).to.be.an(\"object\");\r",
+									"  pm.expect(jsonData.article.title).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.article.description).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.article.favorited).to.eql(false);\r",
+									"  pm.expect(jsonData.article.favoritesCount).to.eql(0);\r",
+									"  pm.expect(jsonData.article.body).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.article.tagList).to.be.an(\"array\");\r",
+									"  pm.expect(jsonData.article.slug).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.article.createdAt).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.article.updatedAt).to.be.a(\"string\");\r",
+									"});\r",
+									""
+								],
+								"id": "cc761ea4-f86f-4ebd-a4c7-31f2610655ad"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "2ef6b28d-3169-4233-ac88-c8d2d1716a74"
+							}
+						}
+					],
+					"_postman_id": "89831172-a90c-4f7a-b3aa-ea16fca4fda3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"article\": {\r\n    \"title\": \"{{$randomLoremSentence}}\",\r\n    \"description\": \"{{$randomLoremSentence}}\",\r\n    \"body\": \"{{$randomLoremSentence}}\",\r\n    \"tagList\": \"\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}articles"
+					},
+					"response": []
+				},
+				{
+					"name": "Edit article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "60393f92-50eb-4e09-8e2e-cc75e5bb780f"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									""
+								],
+								"id": "52b5526b-e3ba-4439-903a-f2388aa2f644"
+							}
+						}
+					],
+					"_postman_id": "0dfa711a-38ab-49fc-9e33-b7e0dbe39be7",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"article\": {\r\n        \"title\": \"{{$randomLoremSentence}}\",\r\n        \"description\": \"{{$randomLoremSentence}}\",\r\n        \"body\": \"{{$randomLoremSentence}}\",\r\n        \"tagList\": []\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}articles/{{slugConduit}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"id": "96958ffa-6649-4881-8113-a344d2d06142"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									""
+								],
+								"id": "5ccce120-a62c-4d26-8803-2d21a35329a7"
+							}
+						}
+					],
+					"_postman_id": "16fd15c0-7e6b-4bf8-9126-1f580fbb8cee",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{url}}articles/{{slugConduit}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Like article",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "a2cc0f63-b2e1-4871-b246-fc0d787e245f"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									""
+								],
+								"id": "99c9e36e-36ba-4798-b122-d6bab9dc5b9f"
+							}
+						}
+					],
+					"_postman_id": "21b53706-c9df-4d3f-b112-956eda62318b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{url}}articles/{{slugConduit}}/favorite"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove article like",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "4acad4d0-a6a1-419e-b6a1-1c89d53dc0df"
+							}
+						}
+					],
+					"_postman_id": "5241a6f0-c019-4346-a7f1-97fba96111c0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{url}}articles/{{slugConduit}}/favorite"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "c472eda3-b868-453d-ad8d-4563a5c4f039"
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Create comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "248bbd57-3679-44eb-84cd-5fdb2ccb7aa2"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									""
+								],
+								"id": "1406bf18-ffb2-40b4-a23a-5edfc9980ecc"
+							}
+						}
+					],
+					"_postman_id": "d6331431-72ad-4edd-bfc8-76b3a76bdbfb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comment\": {\r\n        \"body\": \"{{$randomLoremSentence}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}articles/{{slugConduit}}/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"id": "7dcb8168-5d08-4414-8215-69285a3393c9"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createComment)();\r",
+									"}, 1500);\r",
+									""
+								],
+								"id": "aa2acd9a-7185-400b-a36a-ab401b20dc08"
+							}
+						}
+					],
+					"_postman_id": "c5790f7c-8257-4f50-82da-40b816353d01",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{url}}articles/{{slugConduit}}/comments/{{commentId}}"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "bf06b142-69d5-40b0-a7d0-fffa54d76298"
+		},
+		{
+			"name": "Tag",
+			"item": [
+				{
+					"name": "Add tag",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();\r",
+									"\r",
+									"setTimeout(function(){\r",
+									"   eval(environment.createArticle)();\r",
+									"}, 1000);\r",
+									""
+								],
+								"id": "a473acfc-0a33-48a1-a732-7a4d5d595db4"
+							}
+						}
+					],
+					"_postman_id": "b3d1cc31-50ab-49ef-b026-e05686b4a1b5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"article\": {\r\n        \"tagList\": [\"{{$randomLoremWord}}\"]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}articles/{{slugConduit}}"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "42d2feb1-40f7-427b-99ed-93f01915720f"
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "Change username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "c1ef5d66-1327-435b-8595-18ae1444087c"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "cdfedc90-cf34-4f42-8e89-229be73b7312"
+							}
+						}
+					],
+					"_postman_id": "8ae702af-6a40-4201-a0e7-942902f9dd64",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"image\": \"https://api.realworld.io/images/smiley-cyrus.jpeg\",\r\n        \"username\": \"Daniil{{$randomLoremWord}}\",\r\n        \"bio\": null,\r\n        \"email\": \"{{email}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}user"
+					},
+					"response": []
+				},
+				{
+					"name": "New password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "ef9f05ce-a2a6-4d6c-a1a4-2a201cf0c169"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "a34a16c5-94aa-4690-956d-4e561454f696"
+							}
+						}
+					],
+					"_postman_id": "312fe692-c6ef-463b-bdd6-9bb1b0a1a517",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"image\": \"https://api.realworld.io/images/smiley-cyrus.jpeg\",\r\n        \"username\": \"{{username}}\",\r\n        \"bio\": null,\r\n        \"email\": \"{{email}}\",\r\n        \"password\": \"123Pdjdjdj\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}user"
+					},
+					"response": []
+				},
+				{
+					"name": "Add bio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "64dd29d9-78d6-4249-9112-13749aab6978"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "3c38d30a-4841-48ff-9d9f-507e9665e63c"
+							}
+						}
+					],
+					"_postman_id": "414d90cd-9a66-423b-a747-0b3c23cb9072",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"image\": \"https://api.realworld.io/images/smiley-cyrus.jpeg\",\r\n        \"username\": \"{{username}}\",\r\n        \"bio\": \"{{$randomLoremSentence}}\",\r\n        \"email\": \"{{email}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}user"
+					},
+					"response": []
+				},
+				{
+					"name": "Change email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "f758022d-36fb-4365-b83c-2cd6e0d5c98a"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "91df0734-c2e6-4d08-9e5e-96503a67c073"
+							}
+						}
+					],
+					"_postman_id": "87d61fdc-22d9-47e7-a847-5d25dc689d89",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"image\": \"https://api.realworld.io/images/smiley-cyrus.jpeg\",\r\n        \"username\": \"{{username}}\",\r\n        \"bio\": null,\r\n        \"email\": \"{{$randomEmail}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}user"
+					},
+					"response": []
+				},
+				{
+					"name": "Add avatar",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(globals.basicTests)();"
+								],
+								"id": "501b054d-2fa7-4400-a8e2-a02b8f420618"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"eval(environment.registration)();"
+								],
+								"id": "33146bdf-f519-4a17-89e5-c64af74c0c48"
+							}
+						}
+					],
+					"_postman_id": "18d66b0a-7a1e-49a1-8483-425a44079ead",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": {\r\n        \"image\": \"https://api.realworld.io/images/smiley-cyrus.jpeg\",\r\n        \"username\": \"{{username}}\",\r\n        \"bio\": \"{{$randomLoremSentence}}\",\r\n        \"email\": \"{{email}}\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{url}}user"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "5353864b-15a8-4c6f-bdfc-79c8b3982419"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "cc34131a-3b89-409f-9456-77ccadee24d1",
+				"type": "text/javascript",
+				"exec": [
+					"postman.setGlobalVariable('basicTests', ()=> {",
+					" pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"pm.test(\"Response time is less than 800ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(800);",
+					"});   ",
+					"});",
+					"",
+					"postman.setEnvironmentVariable('registration', ()=> {",
+					"",
+					"    const registrationRequest = {",
+					"        url: pm.environment.get('url') + 'users',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                \"user\": {",
+					"                    username: pm.variables.replaceIn('{{$randomUserName}}'),",
+					"                    email: pm.variables.replaceIn('{{$randomEmail}}'),",
+					"                    password: pm.environment.get('passwordConduit')",
+					"                }",
+					"            })",
+					"        },",
+					"    }",
+					"",
+					"    pm.sendRequest(registrationRequest, (error, response) => {",
+					"        console.log(error ? error : response.json());",
+					"        pm.environment.set(\"email\", response.json().user.email);",
+					"        pm.environment.set(\"token\", response.json().user.token);",
+					"        pm.environment.set(\"username\", response.json().user.username);",
+					"    });",
+					"});",
+					"",
+					"",
+					"postman.setEnvironmentVariable('login', ()=> {",
+					"",
+					"    const loginRequest = {",
+					"        url: pm.environment.get('url') + 'users/login',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                \"user\": {",
+					"                \"email\": pm.environment.get('email'),",
+					"                \"password\": pm.environment.get('passwordConduit')",
+					"                }",
+					"            })",
+					"        }",
+					"    }",
+					"",
+					"    pm.sendRequest(loginRequest, (error, response) => {",
+					"        console.log(error ? error : response.json());",
+					"        pm.environment.set(\"token\", response.json().user.token);",
+					"    });",
+					"",
+					"});",
+					"",
+					"postman.setEnvironmentVariable('createArticle', ()=> {",
+					"",
+					"    const createArticleRequest = {",
+					"        url: pm.environment.get('url') + 'articles',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'content-Type': 'application/json',",
+					"            'Authorization': 'Token' + ' ' + pm.environment.get('token'),",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                \"article\": {",
+					"                    title: pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"                    description: pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"                    body:  pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"                    tagList: \"\"",
+					"                }",
+					"            })",
+					"        },",
+					"    }",
+					"",
+					"    pm.sendRequest(createArticleRequest, (error, response) => {",
+					"    console.log(error ? error : response.json());",
+					"    pm.environment.set(\"slugConduit\", response.json().article.slug);",
+					"    });",
+					"});",
+					"",
+					"postman.setEnvironmentVariable('createComment', ()=> {",
+					"",
+					"    const createCommentRequest = {",
+					"        url: pm.environment.get('url') + 'articles' + '/' + pm.environment.get('slugConduit') + '/' + 'comments',",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json',",
+					"            'Authorization': 'Token' + ' ' + pm.environment.get('token'),",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                \"comment\": {",
+					"                    \"body\": pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"                }",
+					"            })",
+					"        },",
+					"    }",
+					"",
+					"    pm.sendRequest(createCommentRequest, (error, response) => {",
+					"        console.log(error ? error : response.json());",
+					"        pm.environment.set(\"commentId\", response.json().comment.id);",
+					"    });",
+					"",
+					"});",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a397bf7e-46de-4fa0-8645-a4b35631a5df",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
